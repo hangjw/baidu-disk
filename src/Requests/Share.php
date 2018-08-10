@@ -1,7 +1,8 @@
 <?php
 
-namespace Hangjw\BaiduDisk;
+namespace Hangjw\BaiduDisk\Requests;
 
+use Hangjw\BaiduDisk\Exceptions\ShareException;
 use Hangjw\BaiduDisk\Traits\BaiduSendable;
 use GuzzleHttp\Client;
 use GuzzleHttp\Exception\ClientException;
@@ -13,6 +14,9 @@ class Share
 {
 
     use BaiduSendable;
+
+    const LINK_ERROR_CODE    = 401;
+    const REQUEST_ERROR_CODE = 402;
 
     protected $client;
     protected $logId;
@@ -31,7 +35,6 @@ class Share
     protected $panCookies = null;
     protected $superCookies = null;
     protected $bduss = null;
-    protected $bdsToken = null;
 
     // 定死
     protected $channel = 'chunlei';
@@ -42,22 +45,17 @@ class Share
     protected $referer = 'https://pan.baidu.com/disk/home?errno=0&errmsg=Auth%20Login%20Sucess&&bduss=&ssnerror=0&traceid=';
     protected $shareUrl = 'https://pan.baidu.com/share/set';
 
+    public function __get($key)
+    {
+        return $this->config->{$key};
+    }
 
     public function __construct(BaiduConfig $config)
     {
-        $this->init(Config::get('baiduDisk'));
         $this->config = $config;
         $this->client = new Client();
     }
 
-    protected function init($config)
-    {
-        $this->appId = $config['app_id'];
-        $this->panCookies = $config['cookies'];
-        $this->superCookies = $config['cookies'];
-        $this->bduss = $config['bduss'];
-        $this->bdsToken = $config['bds_token'];
-    }
 
     public function shareByUploadResult($uploadResult)
     {
@@ -76,39 +74,39 @@ class Share
 
         $shareHeaders = [
             'User-Agent' => $this->agent,
-            'Referer' => 'https://pan.baidu.com/disk/home',
-            'Cookie'     => $this->panCookies,
+            'Referer'    => 'https://pan.baidu.com/disk/home',
+            'Cookie'     => $this->config->panCookies,
         ];
 
         $shareQueryParams = [
-            'channel' => [$this->channel, $this->channel],
-            'app_id'     => $this->appId,
-            'bdstoken'   => $this->bdsToken,
+            'channel'    => [$this->channel, $this->channel],
+            'app_id'     => $this->config->appId,
+            'bdstoken'   => $this->config->bdsToken,
             'clienttype' => [$this->clientType, $this->clientType],
-            'logid' => $this->logId,
-            'web' => [$this->web, $this->web]
+            'logid'      => $this->logId,
+            'web'        => [$this->web, $this->web],
         ];
 
         $shareFormParams = [
-            'channel_list' => 	'[]',
-            'fid_list' => 	'[' . $id . ']',
-            'period' => 	'0',
-            'schannel' => 	'0',
+            'channel_list' => '[]',
+            'fid_list'     => '[' . $id . ']',
+            'period'       => '0',
+            'schannel'     => '0',
         ];
 
         $url = $uploadUrl . '?' . ($this->getQuery($shareQueryParams));
         try {
             $response = $this->client->request('POST', $url, [
                 'form_params' => $shareFormParams,
-                'headers' => $shareHeaders,
+                'headers'     => $shareHeaders,
             ]);
         } catch (ClientException $clientException) {
-            Log::error('share error, msg:' . $clientException->getMessage() . "\n param:" .var_export($url, true) . var_export($shareFormParams, true) . var_export($shareHeaders, true));
+            throw new ShareException($clientException->getMessage(), self::REQUEST_ERROR_CODE);
         }
 
         $this->result = json_decode((string)$response->getBody(), true);
-        if (empty($this->result['link']))  {
-            Log::error('share result error, msg:' . (string) $response->getBody());
+        if (empty($this->result['link'])) {
+            throw new ShareException('link empty' . var_export($this->result, true), self::LINK_ERROR_CODE);
         }
         return $this;
     }

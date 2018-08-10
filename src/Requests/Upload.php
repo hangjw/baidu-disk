@@ -1,8 +1,8 @@
 <?php
 
-namespace Hangjw\BaiduDisk;
+namespace Hangjw\BaiduDisk\Requests;
 
-use Hangjw\Exceptions\BaiduException;
+use Hangjw\BaiduDisk\Exceptions\UploadException;
 use Hangjw\BaiduDisk\Traits\BaiduSendable;
 use GuzzleHttp\Client;
 use GuzzleHttp\Exception\ClientException;
@@ -33,11 +33,6 @@ class Upload
 
     // 需要配置
     protected $config;
-    protected $appId = null;
-    protected $panCookies = null;
-    protected $superCookies = null;
-    protected $bduss = null;
-    protected $bdsToken = null;
 
     // 固定参数
     protected $channel = 'chunlei';
@@ -50,24 +45,19 @@ class Upload
     protected $preCreateUrl = 'https://pan.baidu.com/api/precreate';
     protected $createUrl = 'https://pan.baidu.com/api/create';
 
-    public function __construct(BaiduConfig $config)
+    public function __get($key)
     {
-        $this->init(Config::get('baiduDisk'));
-        $this->config = $config;
-        $this->client = new Client();
+        return $this->config->{$key};
     }
 
-    protected function init($config)
+    public function __construct(BaiduConfig $config)
     {
-        $this->appId = $config['app_id'];
-        $this->panCookies = $config['cookies'];
-        $this->superCookies = $config['cookies'];
+        $this->config = $config;
+        $this->client = new Client();
         $this->header = [
             'User-Agent' => $this->agent,
-            'Cookie'     => $this->superCookies,
+            'Cookie'     => $this->config->superCookies,
         ];
-        $this->bduss = $config['bduss'];
-        $this->bdsToken = $config['bds_token'];
     }
 
     protected function post()
@@ -77,11 +67,11 @@ class Upload
 
         $uploadQueryParam = [
             'method'     => $this->action,
-            'app_id'     => $this->appId,
+            'app_id'     => $this->config->appId,
             'channel'    => $this->channel,
             'clienttype' => $this->clientType,
             'web'        => $this->web,
-            'BDUSS'      => $this->replaceBd($this->bduss), //$this->bduss,
+            'BDUSS'      => $this->replaceBd($this->config->bduss), //$this->bduss,
             'logid'      => $this->logId,
             'path'       => $this->replaceBd($this->path),
             'uploadid'   => $this->uploadId,
@@ -109,7 +99,7 @@ class Upload
             ];
             $response = $this->client->request('POST', $url, $options);
         } catch (ClientException $clientException) {
-            throw new BaiduException($clientException->getMessage(), self::UPLOAD_ERROR_CODE);
+            throw new UploadException($clientException->getMessage(), self::UPLOAD_ERROR_CODE);
         }
 
 
@@ -131,8 +121,8 @@ class Upload
         $createQueryParam = [
             'channel'      => $this->channel,
             'web'          => $this->web,
-            'app_id'       => $this->appId,
-            'bdstoken'     => $this->bdsToken,
+            'app_id'       => $this->config->appId,
+            'bdstoken'     => $this->config->bdsToken,
             'logid'        => $this->logId,
             'clienttype'   => $this->clientType,
             'startLogTime' => time() - mt_rand(1000, 10000) + mt_rand(100, 999),
@@ -147,7 +137,7 @@ class Upload
         $preCreateHeaders = [
             'User-Agent' => $this->agent,
             'Referer'    => $this->referer,
-            'Cookie'     => $this->panCookies,
+            'Cookie'     => $this->config->panCookies,
         ];
 
         $url = $createUrl . '?' . ($this->getQuery($createQueryParam));
@@ -159,10 +149,12 @@ class Upload
             ];
             $response = $this->client->request('POST', $url, $data);
         } catch (ClientException $clientException) {
-            throw new BaiduException($clientException->getMessage(), self::PRE_ERROR_CODE);
+            throw new UploadException($clientException->getMessage(), self::PRE_ERROR_CODE);
         }
 
+
         $result = ((string)$response->getBody());
+
         $data = json_decode($result, true);
         $this->path = $data['path'];
         $this->uploadId = $data['uploadid'];
@@ -177,8 +169,8 @@ class Upload
             'rtype'      => '1',
             'channel'    => $this->channel,
             'web'        => $this->web,
-            'app_id'     => $this->appId,
-            'bdstoken'   => $this->bdsToken,
+            'app_id'     => $this->config->appId,
+            'bdstoken'   => $this->config->bdsToken,
             'logid'      => $this->logId, //'MTUzMjA1NjkwMTA3NDAuODc2NDI2MTQ3NjczODUwOQ',
             'clienttype' => $this->clientType,
         ];
@@ -198,12 +190,12 @@ class Upload
                 'form_params' => $createFormParam,
                 'headers'     => [
                     'User-Agent' => $this->agent,
-                    'Cookie'     => $this->panCookies,
+                    'Cookie'     => $this->config->panCookies,
                 ],
             ];
             $response = $this->client->request('POST', $url, $options);
         } catch (ClientException $clientException) {
-            throw new BaiduException($clientException->getMessage(), self::CREATE_ERROR_CODE);
+            throw new UploadException($clientException->getMessage(), self::CREATE_ERROR_CODE);
         }
 
         $this->result = json_decode((string)$response->getBody(), true);

@@ -7,27 +7,25 @@ use Illuminate\Support\Facades\Config as laravelConfig;
 class Config
 {
 
-    protected $appId;
-    protected $panCookies;
-    protected $superCookies;
-    protected $bduss;
-    protected $bdsToken;
+    public $appId;
+    public $panCookies;
+    public $superCookies;
+    public $bduss;
+    public $bdsToken;
+    public $cookies;
 
     public function __construct($configs)
     {
-        foreach($configs as $key => $config) {
-            $this->set($key, $config);
+        foreach ($configs as $key => $config) {
+            $this->{$this->studly($key)} = $config;
         }
+        $this->panCookies = $configs['cookies'];
+        $this->superCookies = $configs['cookies'];
     }
 
-    public function get($key)
+    public function studly($value)
     {
-        return $this->key ?? null;
+        $value = ucwords(str_replace(['-', '_'], ' ', $value));
+        return lcfirst(str_replace(' ', '', $value));
     }
-
-    public function set($key, $config)
-    {
-        $this->key = $config;
-    }
-
 }

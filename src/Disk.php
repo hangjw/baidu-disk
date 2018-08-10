@@ -2,7 +2,10 @@
 
 namespace Hangjw\BaiduDisk;
 
-use Hangjw\Exceptions\BaiduException;
+use Hangjw\BaiduDisk\Requests\Share;
+use Hangjw\BaiduDisk\Requests\Token;
+use Hangjw\BaiduDisk\Requests\Upload;
+use Hangjw\Exceptions\UploadException;
 use GuzzleHttp\Client;
 use Illuminate\Support\Facades\Config;
 use Hangjw\BaiduDisk\Config as BaiduConfig;
@@ -13,9 +16,14 @@ class Disk
     protected $upload;
     protected $share;
 
-    public function __construct()
+
+    public function __construct($config)
     {
-        $config = new BaiduConfig(Config::get('baiduDisk'));
+        // 初始化配置
+        $config = new BaiduConfig($config);
+        $config->bdsToken = (new Token($config))->get();
+
+        // 初始化模型
         $this->upload = new Upload($config);
         $this->share = new Share($config);
     }

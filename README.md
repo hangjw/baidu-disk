@@ -1,124 +1,23 @@
-<p align="center">
-<a href="http://laravel-admin.org/">
-<img src="http://laravel-admin.org/img/logo004.png" alt="laravel-admin">
-</a>
-
-<p align="center">⛵<code>laravel-admin</code> is administrative interface builder for laravel which can help you build CRUD backends just with few lines of code.</p>
-
-<p align="center">
-<a href="http://laravel-admin.org/docs">Documentation</a> | 
-<a href="http://laravel-admin.org/docs/#/zh/">中文文档</a> | 
-<a href="http://laravel-admin.org/demo">Demo</a> | 
-<a href="https://github.com/z-song/laravel-admin.org">Demo source code</a> | 
-<a href="https://github.com/laravel-admin-extensions">Extensions</a>
-</p>
-
-<p align="center">
-    <a href="https://travis-ci.org/z-song/laravel-admin">
-        <img src="https://travis-ci.org/z-song/laravel-admin.svg?branch=master" alt="Build Status">
-    </a>
-    <a href="https://styleci.io/repos/48796179">
-        <img src="https://styleci.io/repos/48796179/shield" alt="StyleCI">
-    </a>
-    <a href="https://scrutinizer-ci.com/g/z-song/laravel-admin/?branch=master">
-        <img src="https://scrutinizer-ci.com/g/z-song/laravel-admin/badges/quality-score.png?b=master" alt="Scrutinizer Code Quality">
-    </a>
-    <a href="https://packagist.org/packages/encore/laravel-admin">
-        <img src="https://img.shields.io/packagist/l/encore/laravel-admin.svg?maxAge=2592000&&style=flat-square" alt="Packagist">
-    </a>
-    <a href="https://packagist.org/packages/encore/laravel-admin">
-        <img src="https://img.shields.io/packagist/dt/encore/laravel-admin.svg?style=flat-square" alt="Total Downloads">
-    </a>
-    <a href="https://github.com/z-song/laravel-admin">
-        <img src="https://img.shields.io/badge/Awesome-Laravel-brightgreen.svg?style=flat-square" alt="Awesome Laravel">
-    </a>
-</div>
-
-<p align="center">
-    Inspired by <a href="https://github.com/sleeping-owl/admin" target="_blank">SleepingOwlAdmin</a> and <a href="https://github.com/zofe/rapyd-laravel" target="_blank">rapyd-laravel</a>.
-</p>
-
-Screenshots
-------------
-
-![laravel-admin](https://cloud.githubusercontent.com/assets/1479100/19625297/3b3deb64-9947-11e6-807c-cffa999004be.jpg)
-
-Requirements
-------------
- - PHP >= 7.0.0
- - Laravel >= 5.5.0
- - Fileinfo PHP Extension
- 
-Installation
-------------
-
-> This package requires PHP 7+ and Laravel 5.5, for old versions please refer to [1.4](http://laravel-admin.org/docs/v1.4/#/) 
-
-First, install laravel 5.5, and make sure that the database connection settings are correct.
-
+### 初始化客户端
 ```
-composer require encore/laravel-admin
+$disk = new Disk([
+     // 百度appId
+     "app_id"    => '250528',
+     /** 登录cookies **/
+     "cookies"   => 'BAIDUID=CF707618FE595DF2FED9489A30F529D5:FG=1; BIDUPSID=3F900108930D11475F6D15543E86BEBB; PSTM=1533867674; H_PS_PSSID=1436_21094_26920_22159; PSINO=3; BDORZ=B490B5EBF6F3CD402E515D22BCDA1598; BDUSS=XVsZU93SVMycWFGTHRxZ3NmN0NtaGV2ZGdHNUt2UVIwTTN4Z2tYMERzQ25nNVJiQUFBQUFBJCQAAAAAAAAAAAEAAADzga5SztLP69Kq0KHD1zUAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAKf2bFun9mxbZ; PANWEB=1; SCRC=44f548891b8565512f34f1c41f54640b; STOKEN=d76d05c52d7485929f29102ef3ac97dce006b5b56e910db6b03c87c1cbcccaac; PANPSC=6138060809989037094%3AzKsuZfKzYZO%2BotxC47C9l%2Bn90oj%2BY%2FIsAtqdpC88XMaj7IhdbAeID0Y8fbM8BwVwXZppmOynmt0wwo4y0uRbvX9caaOGKk2RKIw1F%2F%2BNV2H%2F5yY%2B2yl0OfJmtbgKOavkK1jqgN6tzwnA7ohSXIR1cjm7g7CLsfI4RPoS1ZAzLYpJLOsdih%2BPVA%3D%3D; Hm_lvt_7a3960b6f067eb0085b7f96ff5e660b0=1533867690; Hm_lpvt_7a3960b6f067eb0085b7f96ff5e660b0=1533867690; cflag=15%3A3',
+     // token
+     "bds_token" => 'e903ed2f54b904ec8a3ec03a0d71fd3e',
+     // 文件方参数
+     "bduss"     => 'pansec_DCb740ccc5511e5e8fedcff06b081203-+RIXHjaNduLh5uFqehjW9HDTXR0huDjRW0KGvZR/pDGXD+TRZGrXIIOWl0xj1ndMwRau+g4hSP7phgFFNVODPFHT0Rp4WwT3SxRD/diRzexOynt4UJX9W7Km5LbktRfNcd/ml32VP0g3LJ75Gxp4MOWHXOVtWO7DsSFyFL56mRMc5/PAYOScfs2tj4Vl6CDmR0MZq6y94CzTVrcb/3hRZxVaCxj/so9GnrQS2eEaaNBgT+XJffjAwdLmc6Ftn6xU5KzEBXbXaXsGRWmr72A6sQ==',
+]);
 ```
 
-Then run these commands to publish assets and config：
-
+### 上传文件
 ```
-php artisan vendor:publish --provider="Encore\Admin\AdminServiceProvider"
-```
-After run command you can find config file in `config/admin.php`, in this file you can change the install directory,db connection or table names.
-
-At last run following command to finish install. 
-```
-php artisan admin:install
+$result = BaiduDisk::upload($sourcePath, $toPath)->getResult();
 ```
 
-Open `http://localhost/admin/` in browser,use username `admin` and password `admin` to login.
-
-Configurations
-------------
-The file `config/admin.php` contains an array of configurations, you can find the default configurations in there.
-
-Backers
-------------
-
-Thank you to all our backers! 🙏 [[Become a backer](https://opencollective.com/laravel-admin#backer)]
-
-<a href="https://opencollective.com/laravel-admin#backers" target="_blank"><img src="https://opencollective.com/laravel-admin/backers.svg?width=890"></a>
-
-## Sponsors
-
-Support this project by becoming a sponsor. Your logo will show up here with a link to your website. [[Become a sponsor](https://opencollective.com/laravel-admin#sponsor)]
-
-<a href="https://opencollective.com/laravel-admin/sponsor/0/website" target="_blank"><img src="https://opencollective.com/laravel-admin/sponsor/0/avatar.svg"></a>
-<a href="https://opencollective.com/laravel-admin/sponsor/1/website" target="_blank"><img src="https://opencollective.com/laravel-admin/sponsor/1/avatar.svg"></a>
-<a href="https://opencollective.com/laravel-admin/sponsor/2/website" target="_blank"><img src="https://opencollective.com/laravel-admin/sponsor/2/avatar.svg"></a>
-<a href="https://opencollective.com/laravel-admin/sponsor/3/website" target="_blank"><img src="https://opencollective.com/laravel-admin/sponsor/3/avatar.svg"></a>
-<a href="https://opencollective.com/laravel-admin/sponsor/4/website" target="_blank"><img src="https://opencollective.com/laravel-admin/sponsor/4/avatar.svg"></a>
-<a href="https://opencollective.com/laravel-admin/sponsor/5/website" target="_blank"><img src="https://opencollective.com/laravel-admin/sponsor/5/avatar.svg"></a>
-<a href="https://opencollective.com/laravel-admin/sponsor/6/website" target="_blank"><img src="https://opencollective.com/laravel-admin/sponsor/6/avatar.svg"></a>
-<a href="https://opencollective.com/laravel-admin/sponsor/7/website" target="_blank"><img src="https://opencollective.com/laravel-admin/sponsor/7/avatar.svg"></a>
-<a href="https://opencollective.com/laravel-admin/sponsor/8/website" target="_blank"><img src="https://opencollective.com/laravel-admin/sponsor/8/avatar.svg"></a>
-<a href="https://opencollective.com/laravel-admin/sponsor/9/website" target="_blank"><img src="https://opencollective.com/laravel-admin/sponsor/9/avatar.svg"></a>
-
-Other
-------------
-`laravel-admin` based on following plugins or services:
-
-+ [Laravel](https://laravel.com/)
-+ [AdminLTE](https://almsaeedstudio.com/)
-+ [Datetimepicker](http://eonasdan.github.io/bootstrap-datetimepicker/)
-+ [font-awesome](http://fontawesome.io)
-+ [moment](http://momentjs.com/)
-+ [Google map](https://www.google.com/maps)
-+ [Tencent map](http://lbs.qq.com/)
-+ [bootstrap-fileinput](https://github.com/kartik-v/bootstrap-fileinput)
-+ [jquery-pjax](https://github.com/defunkt/jquery-pjax)
-+ [Nestable](http://dbushell.github.io/Nestable/)
-+ [toastr](http://codeseven.github.io/toastr/)
-+ [X-editable](http://github.com/vitalets/x-editable)
-+ [bootstrap-number-input](https://github.com/wpic/bootstrap-number-input)
-+ [fontawesome-iconpicker](https://github.com/itsjavi/fontawesome-iconpicker)
-
-License
-------------
-`laravel-admin` is licensed under [The MIT License (MIT)](LICENSE).
+### 通过上传结果获取分享地址
+```
+$path = BaiduDisk::getShareUrlByResult($result);
+```
