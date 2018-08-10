@@ -1,0 +1,29 @@
+{
+    "name": "hangjw/baidu-disk",
+    "description": "baidu disk",
+    "type": "library",
+    "keywords": ["baidu", "disk"],
+    "homepage": "https://github.com/hangjw/baidu-disk",
+    "license": "MIT",
+    "authors": [
+        {
+            "name": "hangjw",
+            "email": "872208946@qq.com"
+        }
+    ],
+    "require": {
+        "php": ">=7.0.0"
+    },
+    "autoload": {
+        "psr-4": {
+            "Hangjw\\BaiduDisk\\": "src/"
+        },
+        "files": [
+        ]
+    },
+    "autoload-dev": {
+
+    },
+    "suggest": {
+    }
+}
